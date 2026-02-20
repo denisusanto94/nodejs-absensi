@@ -1,0 +1,12 @@
+.DS_Store
+backend/node_modules/**
+backend/package-lock.json
+zeppos-app/node_modules/**
+zeppos-app/dist/**
+zeppos-app/package-lock.json
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
