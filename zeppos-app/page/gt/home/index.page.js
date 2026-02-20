@@ -45,6 +45,9 @@ Page({
     if (this.geolocation) {
       this.geolocation.stop();
     }
+    if (this.state.timer) {
+      clearInterval(this.state.timer);
+    }
   },
 
   createGPSScreen() {
@@ -53,9 +56,9 @@ Page({
     });
 
     this.state.groupGPS.createWidget(hmUI.widget.TEXT, {
-      x: 0,
+      x: px(25),
       y: 0,
-      w: DEVICE_WIDTH,
+      w: DEVICE_WIDTH - px(50),
       h: DEVICE_HEIGHT,
       text: "Scanning GPS...\nPlease go outdoors.",
       text_size: px(30),
@@ -72,9 +75,9 @@ Page({
 
     // Input Display
     this.state.txtInput = this.state.groupInput.createWidget(hmUI.widget.TEXT, {
-      x: px(20),
+      x: px(25),
       y: px(20),
-      w: DEVICE_WIDTH - px(40),
+      w: DEVICE_WIDTH - px(50),
       h: px(50),
       text: "Enter Code",
       text_size: px(32),
@@ -85,7 +88,9 @@ Page({
     // Keypad Layout
     const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "DEL", "0", "OK"];
     const startY = px(80);
-    const btnW = (DEVICE_WIDTH - px(40)) / 3;
+    const margin = px(25);
+    const gap = px(10);
+    const btnW = (DEVICE_WIDTH - margin * 2 - gap * 2) / 3;
     const btnH = px(60);
 
     keys.forEach((key, index) => {
@@ -93,9 +98,9 @@ Page({
       const col = index % 3;
 
       this.state.groupInput.createWidget(hmUI.widget.BUTTON, {
-        x: px(20) + col * btnW,
+        x: margin + col * (btnW + gap),
         y: startY + row * btnH,
-        w: btnW - px(4),
+        w: btnW,
         h: btnH - px(4),
         text: key,
         color: 0x000000,
@@ -114,41 +119,61 @@ Page({
       x: 0, y: 0, w: DEVICE_WIDTH, h: DEVICE_HEIGHT
     });
 
-    const infoY = px(40);
-    const gap = px(40);
-    const labelX = px(30);
+    const labelX = px(25);
+    const startY = px(20);
+
+    // Time (24H)
+    this.state.lblTime = this.state.groupDashboard.createWidget(hmUI.widget.TEXT, {
+      x: labelX, y: startY, w: DEVICE_WIDTH - labelX * 2, h: px(35),
+      text: "--:--:--",
+      text_size: px(26),
+      color: 0xffffff,
+      align_h: hmUI.align.CENTER_H // Time looks best centered
+    });
+
+    // Date (DD/MM/YYYY)
+    this.state.lblDate = this.state.groupDashboard.createWidget(hmUI.widget.TEXT, {
+      x: labelX, y: startY + px(35), w: DEVICE_WIDTH - labelX * 2, h: px(35),
+      text: "--/--/----",
+      text_size: px(26),
+      color: 0xcccccc,
+      align_h: hmUI.align.CENTER_H
+    });
+
+    const infoY = startY + px(80); // Start user info lower
+    const gap = px(35); // Reduce gap slightly to fit everything
 
     // Name
     this.state.lblName = this.state.groupDashboard.createWidget(hmUI.widget.TEXT, {
-      x: labelX, y: infoY, w: DEVICE_WIDTH - labelX * 2, h: px(40),
+      x: labelX, y: infoY, w: DEVICE_WIDTH - labelX * 2, h: px(35),
       text: "User: -",
-      text_size: px(28),
+      text_size: px(26),
       color: 0xffffff,
       align_h: hmUI.align.LEFT
     });
 
     // Latitude
     this.state.lblLat = this.state.groupDashboard.createWidget(hmUI.widget.TEXT, {
-      x: labelX, y: infoY + gap * 1.5, w: DEVICE_WIDTH - labelX * 2, h: px(30),
+      x: labelX, y: infoY + gap, w: DEVICE_WIDTH - labelX * 2, h: px(35),
       text: "Latitude: -",
-      text_size: px(28),
+      text_size: px(26),
       color: 0xffffff,
       align_h: hmUI.align.LEFT
     });
 
     // Longitude
     this.state.lblLon = this.state.groupDashboard.createWidget(hmUI.widget.TEXT, {
-      x: labelX, y: infoY + gap * 2.5, w: DEVICE_WIDTH - labelX * 2, h: px(30),
+      x: labelX, y: infoY + gap * 2, w: DEVICE_WIDTH - labelX * 2, h: px(35),
       text: "Longitude: -",
-      text_size: px(28),
+      text_size: px(26),
       color: 0xffffff,
       align_h: hmUI.align.LEFT
     });
 
-    const btnMargin = px(15);
+    const btnMargin = px(25);
     const btnGap = px(15);
     const btnWidth = (DEVICE_WIDTH - btnMargin * 2 - btnGap) / 2;
-    const btnY = infoY + gap * 4.5;
+    const btnY = infoY + gap * 3.5;
 
     // Check In Button (Left)
     this.state.groupDashboard.createWidget(hmUI.widget.BUTTON, {
@@ -181,6 +206,28 @@ Page({
         this.performCheck("OUT");
       }
     });
+
+    // Start Timer
+    this.updateTime();
+    this.state.timer = setInterval(() => {
+      this.updateTime();
+    }, 1000);
+  },
+
+  updateTime() {
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2, '0');
+    const m = now.getMinutes().toString().padStart(2, '0');
+    const s = now.getSeconds().toString().padStart(2, '0');
+    const timeStr = `${h}:${m}:${s}`;
+
+    const day = now.getDate().toString().padStart(2, '0');
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const year = now.getFullYear();
+    const dateStr = `${day}/${month}/${year}`;
+
+    if (this.state.lblTime) this.state.lblTime.setProperty(hmUI.prop.TEXT, timeStr);
+    if (this.state.lblDate) this.state.lblDate.setProperty(hmUI.prop.TEXT, dateStr);
   },
 
   showScreen(name) {
