@@ -1,6 +1,6 @@
 -- Create Database
-CREATE DATABASE IF NOT EXISTS `absensi_amazfit`;
-USE `absensi_amazfit`;
+CREATE DATABASE IF NOT EXISTS `absensi-amazfit`;
+USE `absensi-amazfit`;
 
 -- Users Table
 CREATE TABLE IF NOT EXISTS `users` (

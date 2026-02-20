@@ -5,6 +5,8 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
+const userRoutes = require('./routes/userRoutes');
+const officeRoutes = require('./routes/officeRoutes');
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use(express.static('public')); // Serve admin dashboard
 
 app.use('/api/auth', authRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/offices', officeRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

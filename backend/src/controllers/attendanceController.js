@@ -122,13 +122,21 @@ exports.checkOut = async (req, res) => {
 
 exports.getAllAttendance = async (req, res) => {
     try {
-        // Admin only usually
-        const [rows] = await pool.query(`
+        let query = `
             SELECT a.*, u.name 
             FROM attendance a 
             JOIN users u ON a.user_id = u.id 
-            ORDER BY a.timestamp DESC
-        `);
+        `;
+        let params = [];
+
+        if (req.userRole !== 'admin') {
+            query += ' WHERE a.user_id = ?';
+            params.push(req.userId);
+        }
+
+        query += ' ORDER BY a.timestamp DESC';
+
+        const [rows] = await pool.query(query, params);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ message: err.message });
