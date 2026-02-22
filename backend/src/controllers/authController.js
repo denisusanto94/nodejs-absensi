@@ -54,6 +54,37 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.loginUser = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const [rows] = await pool.execute(`
+            SELECT u.id as id_user, u.email, u.password, u.is_active, 
+                   r.roles_name as roles, d.divisions_name as divisi
+            FROM users u
+            LEFT JOIN users_has_roles uhr ON u.id = uhr.id_users
+            LEFT JOIN roles r ON uhr.id_roles = r.id
+            LEFT JOIN divisions d ON uhr.divisions_id = d.id
+            WHERE u.email = ?
+        `, [email]);
+
+        if (rows.length === 0) return res.status(404).json({ message: 'User not found' });
+        const user = rows[0];
+        if (!user.is_active) return res.status(401).json({ message: 'Account is inactive' });
+
+        const valid = await argon2.verify(user.password, password);
+        if (!valid) return res.status(401).json({ message: 'Invalid Password' });
+
+        res.json({
+            id_user: user.id_user,
+            email: user.email,
+            roles: user.roles || '',
+            divisi: user.divisi || ''
+        });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 exports.register = async (req, res) => {
     const { email, password, name, division_id, office_id } = req.body;
     try {

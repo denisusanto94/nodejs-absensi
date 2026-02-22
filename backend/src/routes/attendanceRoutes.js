@@ -7,5 +7,6 @@ router.post('/checkin', verifyToken, attendanceController.checkIn);
 router.post('/checkout', verifyToken, attendanceController.checkOut);
 router.get('/all', verifyToken, attendanceController.getAllAttendance);
 router.get('/export', verifyToken, isAdmin, attendanceController.exportExcel);
+router.post('/submit', verifyToken, attendanceController.submitAttendance);
 
 module.exports = router;

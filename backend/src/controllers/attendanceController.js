@@ -190,3 +190,39 @@ exports.exportExcel = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+exports.submitAttendance = async (req, res) => {
+    const {
+        id_user, office_id,
+        check_in, check_in_lat, check_in_long,
+        check_out, check_out_lat, check_out_long
+    } = req.body;
+
+    try {
+        // Validation: Calculate duration if check_out exists
+        let work_duration = 0;
+        if (check_in && check_out) {
+            const start = new Date(check_in);
+            const end = new Date(check_out);
+            work_duration = Math.floor((end - start) / 60000);
+        }
+
+        // Determine status (simple logic for now)
+        const status = 'present';
+
+        await pool.execute(`
+            INSERT INTO attendances 
+            (user_id, office_id, check_in, check_in_lat, check_in_long, check_out, check_out_lat, check_out_long, work_duration, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+            id_user, office_id,
+            check_in || null, check_in_lat || null, check_in_long || null,
+            check_out || null, check_out_lat || null, check_out_long || null,
+            work_duration, status
+        ]);
+
+        res.status(201).json({ message: 'Attendance submitted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
