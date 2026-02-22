@@ -1,6 +1,6 @@
 # API Documentation - Absensi App
 
-Dokumentasi ini berisi daftar endpoint API yang tersedia untuk integrasi aplikasi (contoh: Zepp OS / Mobile).
+Dokumentasi ini berisi daftar endpoint API yang tersedia untuk integrasi aplikasi (contoh: Mobile).
 
 **Base URL**: `http://localhost:3000/api` (Sesuaikan dengan IP server jika running di jaringan lokal).
 
@@ -21,8 +21,8 @@ Digunakan untuk login ke sistem dashboard admin (mengembalikan token dashboard).
   ```
 - **Response**: Mengembalikan token JWT dan data user.
 
-### Login User (Mobile/Zepp App)
-Endpoint khusus dengan format response yang ringan untuk perangkat mobile/wearable.
+### Login User (Mobile)
+Endpoint khusus dengan format response yang ringan untuk perangkat mobile.
 - **URL**: `/auth/login_user`
 - **Method**: `POST`
 - **Request Body**:
