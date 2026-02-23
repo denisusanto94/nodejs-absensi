@@ -1,5 +1,5 @@
 const pool = require('../config/db');
-const argon2 = require('argon2');
+const bcrypt = require('bcryptjs');
 
 exports.getUsers = async (req, res) => {
     try {
@@ -23,7 +23,7 @@ exports.createUser = async (req, res) => {
     const conn = await pool.getConnection();
     try {
         await conn.beginTransaction();
-        const hashedPassword = await argon2.hash(password);
+        const hashedPassword = bcrypt.hashSync(password, 10);
 
         const [userResult] = await conn.execute(
             'INSERT INTO users (email, password, name, office_id) VALUES (?, ?, ?, ?)',
@@ -70,7 +70,7 @@ exports.updateUser = async (req, res) => {
         let params = [email, name, office_id, is_active];
 
         if (password && password.trim() !== '') {
-            const hashedPassword = await argon2.hash(password);
+            const hashedPassword = bcrypt.hashSync(password, 10);
             query += ', password = ?';
             params.push(hashedPassword);
         }

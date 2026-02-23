@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 const jwt = require('jsonwebtoken');
-const argon2 = require('argon2');
+const bcrypt = require('bcryptjs');
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
@@ -25,7 +25,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Account is inactive' });
         }
 
-        const passwordIsValid = await argon2.verify(user.password, password);
+        const passwordIsValid = bcrypt.compareSync(password, user.password);
         if (!passwordIsValid) {
             console.log(`Login failed: Invalid password for user ${email}`);
             return res.status(401).json({ auth: false, token: null, message: 'Invalid Password' });
@@ -88,7 +88,7 @@ exports.loginUser = async (req, res) => {
         const user = rows[0];
         if (!user.is_active) return res.status(401).json({ message: 'Account is inactive' });
 
-        const valid = await argon2.verify(user.password, password);
+        const valid = bcrypt.compareSync(password, user.password);
         if (!valid) return res.status(401).json({ message: 'Invalid Password' });
 
         res.json({
@@ -105,7 +105,7 @@ exports.loginUser = async (req, res) => {
 exports.register = async (req, res) => {
     const { email, password, name, division_id, office_id } = req.body;
     try {
-        const hashedPassword = await argon2.hash(password);
+        const hashedPassword = bcrypt.hashSync(password, 10);
         await pool.execute('INSERT INTO users (email, password, name, division_id, office_id) VALUES (?, ?, ?, ?, ?)',
             [email, hashedPassword, name, division_id, office_id]);
         res.status(201).json({ message: 'User registered successfully!' });

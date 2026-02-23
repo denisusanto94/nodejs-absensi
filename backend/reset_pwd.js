@@ -1,10 +1,10 @@
 const pool = require('./src/config/db');
-const argon2 = require('argon2');
+const bcrypt = require('bcryptjs');
 
 async function updateAdminPassword() {
     try {
         const newPassword = '12345678';
-        const hashedPassword = await argon2.hash(newPassword);
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
         require('fs').writeFileSync('new_hash.txt', hashedPassword);
         console.log('New Hash saved to new_hash.txt');
 
