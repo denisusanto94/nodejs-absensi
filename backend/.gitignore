@@ -1,0 +1,7 @@
+node_modules/
+
+# Uploaded files (ignore content, keep directory structure)
+uploads/upload_absensi/*
+uploads/upload_transum/*
+!uploads/upload_absensi/.gitkeep
+!uploads/upload_transum/.gitkeep

@@ -142,7 +142,86 @@ Mengirimkan data presensi lengkap (Check-in & Check-out) sekaligus (Berguna untu
 
 ---
 
-## 4. Leaves / Perks (Izin & Cuti)
+## 4. Attendance Photo / Selfie (Upload Foto Absensi)
+
+API ini merupakan bagian dari serangkaian proses absensi. Setelah check-in/check-out, user dapat mengunggah foto selfie sebagai bukti kehadiran.
+
+### Upload Check-in Photo
+Mengunggah foto selfie saat check-in. User harus sudah melakukan check-in pada hari itu.
+- **URL**: `/attendance-foto/checkin`
+- **Method**: `POST`
+- **Headers**:
+  ```
+  Authorization: Bearer <token>
+  Content-Type: multipart/form-data
+  ```
+- **Request Body** (form-data):
+  | Field | Type | Required | Keterangan |
+  |-------|------|----------|------------|
+  | `foto` | File | Ya | File foto selfie (JPEG/PNG/WebP, maks 5MB) |
+
+- **Success Response (200)**:
+  ```json
+  {
+    "message": "Check-in photo uploaded successfully",
+    "filename": "2_1708678800000.jpg",
+    "attendance_id": 5
+  }
+  ```
+- **Error Response (400)** — Belum check-in:
+  ```json
+  {
+    "message": "No check-in found for today. Please check in first."
+  }
+  ```
+- **Error Response (400)** — Tidak ada file:
+  ```json
+  {
+    "message": "No photo uploaded."
+  }
+  ```
+
+### Upload Check-out Photo
+Mengunggah foto selfie saat check-out. User harus sudah memiliki record absensi pada hari itu.
+- **URL**: `/attendance-foto/checkout`
+- **Method**: `POST`
+- **Headers**:
+  ```
+  Authorization: Bearer <token>
+  Content-Type: multipart/form-data
+  ```
+- **Request Body** (form-data):
+  | Field | Type | Required | Keterangan |
+  |-------|------|----------|------------|
+  | `foto` | File | Ya | File foto selfie (JPEG/PNG/WebP, maks 5MB) |
+
+- **Success Response (200)**:
+  ```json
+  {
+    "message": "Check-out photo uploaded successfully",
+    "filename": "2_1708678900000.jpg",
+    "attendance_id": 5
+  }
+  ```
+- **Error Response (400)** — Belum ada absensi hari ini:
+  ```json
+  {
+    "message": "No attendance record found for today."
+  }
+  ```
+
+### Akses Foto yang Diupload
+Foto yang sudah diupload dapat diakses melalui URL statis:
+```
+GET http://localhost:3000/uploads/upload_absensi/<filename>
+```
+Contoh: `http://localhost:3000/uploads/upload_absensi/2_1708678800000.jpg`
+
+> **Catatan**: Format penamaan file otomatis: `{userId}_{timestamp}.{ext}`
+
+---
+
+## 5. Leaves / Perks (Izin & Cuti)
 
 ### Get All Leaves
 - **URL**: `/leaves`

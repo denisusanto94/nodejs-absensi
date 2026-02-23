@@ -138,8 +138,11 @@ CREATE TABLE attendances (
 
     check_in_lat DECIMAL(10,8),
     check_in_long DECIMAL(11,8),
+    check_in_foto VARCHAR(255) DEFAULT NULL,
+
     check_out_lat DECIMAL(10,8),
     check_out_long DECIMAL(11,8),
+    check_out_foto VARCHAR(255) DEFAULT NULL,
 
     status ENUM(
         'present',

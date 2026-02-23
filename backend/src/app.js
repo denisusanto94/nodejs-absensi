@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 const os = require('os');
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ const leaveRoutes = require('./routes/leaveRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
 const attendanceTransumRoutes = require('./routes/attendanceTransumRoutes');
+const attendanceFotoRoutes = require('./routes/attendanceFotoRoutes');
 
 const app = express();
 
@@ -23,6 +25,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static('public')); // Serve admin dashboard
+app.use('/uploads', express.static(path.join(__dirname, '../uploads'))); // Serve uploaded files
 
 app.use('/api/auth', authRoutes);
 app.use('/api/attendance', attendanceRoutes);
@@ -35,6 +38,7 @@ app.use('/api/leaves', leaveRoutes);
 app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/attendance-transum', attendanceTransumRoutes);
+app.use('/api/attendance-foto', attendanceFotoRoutes);
 
 // Helper to get the local network IP address
 function getLocalIP() {
