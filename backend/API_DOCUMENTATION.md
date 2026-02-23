@@ -303,6 +303,78 @@ Menghapus data cuti (hanya Admin).
 
 ---
 
+## 6. Attendance Transum Foto (Upload Foto Transum)
+
+API untuk mengunggah foto selfie sebagai bukti kehadiran transportasi umum (Absensi Rabu).
+
+### Upload Check-in Transum Photo
+Mengunggah foto selfie saat check-in transum. User harus sudah melakukan check-in transum pada hari itu.
+- **URL**: `/attendance-transum-foto/checkin`
+- **Method**: `POST`
+- **Headers**:
+  ```
+  Authorization: Bearer <token>
+  Content-Type: multipart/form-data
+  ```
+- **Request Body** (form-data):
+  | Field | Type | Required | Keterangan |
+  |-------|------|----------|------------|
+  | `foto` | File | Ya | File foto selfie (JPEG/PNG/WebP, maks 5MB) |
+
+- **Success Response (200)**:
+  ```json
+  {
+    "message": "Transum check-in photo uploaded successfully",
+    "filename": "transum_2_1708678800000.jpg",
+    "attendance_transum_id": 5
+  }
+  ```
+- **Error Response (400)** — Belum check-in:
+  ```json
+  {
+    "message": "No transum check-in found for today. Please check in first."
+  }
+  ```
+
+### Upload Check-out Transum Photo
+Mengunggah foto selfie saat check-out transum.
+- **URL**: `/attendance-transum-foto/checkout`
+- **Method**: `POST`
+- **Headers**:
+  ```
+  Authorization: Bearer <token>
+  Content-Type: multipart/form-data
+  ```
+- **Request Body** (form-data):
+  | Field | Type | Required | Keterangan |
+  |-------|------|----------|------------|
+  | `foto` | File | Ya | File foto selfie (JPEG/PNG/WebP, maks 5MB) |
+
+- **Success Response (200)**:
+  ```json
+  {
+    "message": "Transum check-out photo uploaded successfully",
+    "filename": "transum_2_1708678900000.jpg",
+    "attendance_transum_id": 5
+  }
+  ```
+- **Error Response (400)** — Belum ada absensi hari ini:
+  ```json
+  {
+    "message": "No transum record found for today."
+  }
+  ```
+
+### Akses Foto Transum
+Foto transum yang sudah diupload dapat diakses melalui URL statis:
+```
+GET http://localhost:3000/uploads/upload_transum/<filename>
+```
+> **Format penamaan file**: `transum_{userId}_{timestamp}.{ext}`
+
+---
+
 ## Catatan Keamanan
 Semua API (kecuali Login) memerlukan Header Authorization:
 `Authorization: Bearer <YOUR_JWT_TOKEN>`
+

@@ -17,6 +17,7 @@ const roleRoutes = require('./routes/roleRoutes');
 const permissionRoutes = require('./routes/permissionRoutes');
 const attendanceTransumRoutes = require('./routes/attendanceTransumRoutes');
 const attendanceFotoRoutes = require('./routes/attendanceFotoRoutes');
+const attendanceTransumFotoRoutes = require('./routes/attendanceTransumFotoRoutes');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/attendance-transum', attendanceTransumRoutes);
 app.use('/api/attendance-foto', attendanceFotoRoutes);
+app.use('/api/attendance-transum-foto', attendanceTransumFotoRoutes);
 
 // Helper to get the local network IP address
 function getLocalIP() {
